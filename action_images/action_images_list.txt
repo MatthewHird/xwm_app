@@ -1,0 +1,14 @@
+barrel_roll_black
+blank_icon
+boost_black
+cloak_black
+coordinate_black
+evade_black
+focus_black
+jam_black
+recover_black
+reinforce_black
+reload_black
+rotate_arc_black
+slam_black
+target_lock_black
