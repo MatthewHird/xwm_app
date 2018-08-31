@@ -43,7 +43,7 @@ class ShipInfo(tk.Frame):
 
 
 if __name__ == '__main__':
-    shipId = 23
+    shipId = 1
     root = tk.Tk()
     root.title(XwmDbQuery.get_ship_name(shipId))
     app = Window(root)

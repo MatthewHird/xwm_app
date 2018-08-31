@@ -2,3 +2,5 @@
 \.idea/
 
 server_parameters
+
+__pycache__/

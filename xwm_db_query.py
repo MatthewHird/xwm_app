@@ -45,7 +45,10 @@ class XwmDbQuery:
 
             cur.execute(
                 """
-                SELECT ship_name FROM ship
+                SELECT 
+                    ship_name,
+                    variant
+                FROM ship
                 WHERE ship_id = """
                 + str(ship_id)
             )
@@ -59,12 +62,106 @@ class XwmDbQuery:
             if conn is not None:
                 conn.close()
         result = result_tuple[0][0]
+        if result_tuple[0][1] != '':
+            result += ' (' + result_tuple[0][1] + ')'
+        return result
+
+    @classmethod
+    def get_ship_data(cls, ship_id):
+        conn = None
+        result = None
+
+        try:
+            conn = psycopg2.connect(cls.__get_server_parameters())
+            cur = conn.cursor()
+
+            cur.execute(
+                """
+                SELECT * FROM ship
+                WHERE ship_id = 
+                """ + str(ship_id)
+            )
+            result = cur.fetchall()
+            cur.close()
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+        finally:
+            if conn is not None:
+                conn.close()
+
+        return result
+
+    @classmethod
+    def get_ship_view(cls, ship_name):
+        conn = None
+        result = None
+
+        try:
+            conn = psycopg2.connect(cls.__get_server_parameters())
+            cur = conn.cursor()
+
+            cur.execute(
+                """
+                SELECT * FROM ship_view
+                WHERE ship_name = '""" + ship_name + "'"
+            )
+            result = cur.fetchall()
+            cur.close()
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+        finally:
+            if conn is not None:
+                conn.close()
+
+        return result
+
+    @classmethod
+    def get_ship_stats(cls, ship_id):
+        conn = None
+        result_tuples = []
+
+        try:
+            conn = psycopg2.connect(cls.__get_server_parameters())
+            cur = conn.cursor()
+
+            cur.execute(
+                """
+                SELECT
+                    ship_id,
+                    attack_or_energy,
+                    attack_energy_value,
+                    agility_value,
+                    hull_value,
+                    shield_value
+                FROM ship
+                WHERE ship_id = 
+                """ + str(ship_id)
+            )
+            result_tuples = cur.fetchall()
+            cur.close()
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+        finally:
+            if conn is not None:
+                conn.close()
+
+        keys = ['ship_id', 'attack_or_energy', 'attack_energy_value',
+                'agility_value', 'hull_value', 'shield_value']
+
+        result = dict(zip(keys, result_tuples[0]))
+
         return result
 
     @classmethod
     def get_maneuver_dial(cls, ship_id):
         conn = None
-        result_tuples = None
+        result_tuples = []
 
         try:
             conn = psycopg2.connect(cls.__get_server_parameters())
@@ -97,7 +194,7 @@ class XwmDbQuery:
     @classmethod
     def get_huge_maneuver_dial(cls, ship_id):
         conn = None
-        result_tuples = None
+        result_tuples = []
 
         try:
             conn = psycopg2.connect(cls.__get_server_parameters())
@@ -128,62 +225,9 @@ class XwmDbQuery:
         return result
 
     @classmethod
-    def get_ship_view(cls, ship_name):
-        conn = None
-        result = None
-
-        try:
-            conn = psycopg2.connect(cls.__get_server_parameters())
-            cur = conn.cursor()
-
-            cur.execute(
-                """
-                SELECT * FROM ship_view
-                WHERE ship_name = '""" + ship_name + "'"
-            )
-            result = cur.fetchall()
-            cur.close()
-
-        except (Exception, psycopg2.DatabaseError) as error:
-            print(error)
-
-        finally:
-            if conn is not None:
-                conn.close()
-
-        return result
-
-    @classmethod
-    def get_ship_data(cls, ship_id):
-        conn = None
-        result = None
-
-        try:
-            conn = psycopg2.connect(cls.__get_server_parameters())
-            cur = conn.cursor()
-
-            cur.execute(
-                """
-                SELECT * FROM ship
-                WHERE ship_id = 
-                """ + str(ship_id)
-            )
-            result = cur.fetchall()
-            cur.close()
-
-        except (Exception, psycopg2.DatabaseError) as error:
-            print(error)
-
-        finally:
-            if conn is not None:
-                conn.close()
-
-        return result
-
-    @classmethod
     def get_pilot_list_data(cls, ship_id):
         conn = None
-        result_tuples = None
+        result_tuples = []
 
         try:
             conn = psycopg2.connect(cls.__get_server_parameters())
@@ -229,7 +273,7 @@ class XwmDbQuery:
     @classmethod
     def get_action_bar(cls, ship_id):
         conn = None
-        result_tuples = None
+        result_tuples = []
 
         try:
             conn = psycopg2.connect(cls.__get_server_parameters())
@@ -264,7 +308,7 @@ class XwmDbQuery:
     @classmethod
     def get_upgrade_bar(cls, ship_id):
         conn = None
-        result_tuples = None
+        result_tuples = []
 
         try:
             conn = psycopg2.connect(cls.__get_server_parameters())
@@ -298,5 +342,5 @@ class XwmDbQuery:
 
 
 if __name__ == '__main__':
-    action_bar = XwmDbQuery.get_upgrade_bar(2)
+    action_bar = XwmDbQuery.get_ship_stats(1)
     print(action_bar)

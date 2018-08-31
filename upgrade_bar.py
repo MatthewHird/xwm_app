@@ -24,7 +24,7 @@ class UpgradeBar(tk.Frame):
             self.upgrade_slots.append(tk.Label(self, bg='snow3', image=self.upgrade_icons.get_icon('blank_icon'),
                                                text='', font=('sans-serif', 7), wraplength=34, width=34,
                                                # compound='top'))
-                                              compound='none'))
+                                               compound='none'))
             self.upgrade_slots[j].grid(row=1, column=j, sticky='nsew')
 
         self.update_upgrade_bar(ship_id)

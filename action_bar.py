@@ -25,6 +25,7 @@ class ActionBar(tk.Frame):
                                               text='', font=('sans-serif', 7), wraplength=60, width=60,
                                               compound='top'))
                                               # compound='none'))
+
             self.action_slots[j].grid(row=1, column=j, sticky='nsew')
 
         self.update_action_bar(ship_id)
