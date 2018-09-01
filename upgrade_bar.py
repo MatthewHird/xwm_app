@@ -1,5 +1,5 @@
 import tkinter as tk
-from window import Window
+from app_window import AppWindow
 from xwm_icons import UpgradeIcons
 from xwm_db_query import XwmDbQuery
 
@@ -50,6 +50,6 @@ if __name__ == '__main__':
     shipId = 23
     root = tk.Tk()
     root.title(XwmDbQuery.get_ship_name(shipId))
-    app = Window(root)
+    app = AppWindow(root)
     UpgradeBar(app, shipId)
     root.mainloop()

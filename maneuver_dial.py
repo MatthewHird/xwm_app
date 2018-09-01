@@ -1,5 +1,5 @@
 import tkinter as tk
-from window import Window
+from app_window import AppWindow
 from xwm_icons import ManeuverIcons
 from xwm_db_query import XwmDbQuery
 
@@ -171,6 +171,6 @@ if __name__ == '__main__':
     shipId = 1
     root = tk.Tk()
     root.title(XwmDbQuery.get_ship_name(shipId))
-    app = Window(root)
+    app = AppWindow(root)
     ManeuverDial(app, shipId)
     root.mainloop()

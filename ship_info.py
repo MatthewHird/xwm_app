@@ -1,5 +1,5 @@
 import tkinter as tk
-from window import Window
+from app_window import AppWindow
 from xwm_db_query import XwmDbQuery
 from ship_stats import ShipStats
 from action_bar import ActionBar
@@ -30,22 +30,20 @@ class ShipInfo(tk.Frame):
         # generate empty maneuver_dial
         self.maneuver_dial = ManeuverDial(self, self.ship_id)
 
-        self.update_ship_info()
+        self.update_ship_info(self.ship_id)
 
-    def update_ship_info(self):
-        ship_view = XwmDbQuery.get_ship_view(self.ship_name)
-
-        self.ship_stats.update_ship_stats(self.ship_id)
-        self.action_bar.update_action_bar(self.ship_id)
-        self.upgrade_bar.update_upgrade_bar(self.ship_id)
-        self.pilot_list.update_pilot_list(self.ship_id)
-        self.maneuver_dial.update_dial(self.ship_id)
+    def update_ship_info(self, ship_id):
+        self.ship_stats.update_ship_stats(ship_id)
+        self.action_bar.update_action_bar(ship_id)
+        self.upgrade_bar.update_upgrade_bar(ship_id)
+        self.pilot_list.update_pilot_list(ship_id)
+        self.maneuver_dial.update_dial(ship_id)
 
 
 if __name__ == '__main__':
     shipId = 1
     root = tk.Tk()
     root.title(XwmDbQuery.get_ship_name(shipId))
-    app = Window(root)
+    app = AppWindow(root)
     ShipInfo(app, ship_id=shipId)
     root.mainloop()

@@ -1,5 +1,5 @@
 import tkinter as tk
-from window import Window
+from app_window import AppWindow
 from xwm_db_query import XwmDbQuery
 
 
@@ -49,7 +49,8 @@ class PilotList(tk.Frame):
         for i in range(1, 15):
             for j in range(4):
                 if j == 1:
-                    pass
+                    self.pilot_table[i][j][0].grid_forget()
+
                 else:
                     self.pilot_table[i][j].grid_forget()
 
@@ -93,6 +94,6 @@ if __name__ == '__main__':
     shipId = 1
     root = tk.Tk()
     root.title(XwmDbQuery.get_ship_name(shipId))
-    app = Window(root)
+    app = AppWindow(root)
     PilotList(app, shipId)
     root.mainloop()
