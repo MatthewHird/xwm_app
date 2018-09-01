@@ -5,12 +5,14 @@ from xwm_db_query import XwmDbQuery
 
 
 class ActionBar(tk.Frame):
-    def __init__(self, master, ship_id=0, pack_side='top', grid_pos=None):
+    def __init__(self, master, ship_id=0, pack_params=None, grid_params=None):
         tk.Frame.__init__(self, master, bg='black')
-        if grid_pos:
-            self.grid(row=grid_pos[0], column=grid_pos[1])
+        if grid_params:
+            self.grid(grid_params)
+        elif pack_params:
+            self.pack(pack_params)
         else:
-            self.pack(side=pack_side)
+            self.pack(side='top')
 
         self.current_ship_id = None
 

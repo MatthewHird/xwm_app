@@ -120,6 +120,81 @@ class XwmDbQuery:
         return result
 
     @classmethod
+    def get_ship_basic_info(cls, ship_id):
+        conn = None
+        result_tuples = []
+
+        try:
+            conn = psycopg2.connect(cls.__get_server_parameters())
+            cur = conn.cursor()
+
+            cur.execute(
+                """
+                SELECT
+                    ship.ship_id,
+                    ship.ship_name,
+                    faction.faction_name,
+                    ship_size.size_name
+                FROM ship
+                    JOIN faction ON ship.faction_id = faction.faction_id
+                    JOIN ship_size ON ship.size_id = ship_size.size_id
+                WHERE ship_id = 
+                """ + str(ship_id)
+            )
+            result_tuples = cur.fetchall()
+            cur.close()
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+        finally:
+            if conn is not None:
+                conn.close()
+
+        keys = ['ship_id', 'ship_name', 'faction_name', 'ship_size']
+
+        result = dict(zip(keys, result_tuples[0]))
+
+        return result
+
+    @classmethod
+    def get_ship_firing_arcs(cls, ship_id):
+        conn = None
+        result_tuples = []
+
+        try:
+            conn = psycopg2.connect(cls.__get_server_parameters())
+            cur = conn.cursor()
+
+            cur.execute(
+                """
+                SELECT 
+                    ship_firing_arcs.ship_id,
+                    firing_arc_type.arc_name
+                FROM ship_firing_arcs
+                    JOIN firing_arc_type ON ship_firing_arcs.firing_arc_id = firing_arc_type.arc_id
+                WHERE ship_id = 
+                """ + str(ship_id)
+            )
+            result_tuples = cur.fetchall()
+            cur.close()
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+        finally:
+            if conn is not None:
+                conn.close()
+
+        keys = ['ship_id', 'firing_arc_name']
+
+        result = []
+        for values in result_tuples:
+            result.append(dict(zip(keys, values)))
+
+        return result
+
+    @classmethod
     def get_ship_stats(cls, ship_id):
         conn = None
         result_tuples = []
@@ -342,5 +417,4 @@ class XwmDbQuery:
 
 
 if __name__ == '__main__':
-    action_bar = XwmDbQuery.get_ship_stats(1)
-    print(action_bar)
+    print(XwmDbQuery.get_ship_basic_info(13))

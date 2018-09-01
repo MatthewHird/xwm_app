@@ -4,12 +4,14 @@ from ship_info import ShipInfo
 
 
 class MainMenu(tk.Frame):
-    def __init__(self, master, pack_side='top', grid_pos=None):
+    def __init__(self, master, pack_params=None, grid_params=None):
         tk.Frame.__init__(self)
-        if grid_pos:
-            self.grid(row=grid_pos[0], column=grid_pos[1])
+        if grid_params:
+            self.grid(grid_params)
+        elif pack_params:
+            self.pack(pack_params)
         else:
-            self.pack(side=pack_side)
+            self.pack(side='top')
 
         self.butt_frame = tk.Frame(self)
         self.butt_frame.pack(side='top')
@@ -19,7 +21,7 @@ class MainMenu(tk.Frame):
         self.next_butt.pack(side='right')
 
         self.ship_id = 1
-        self.ship_info = ShipInfo(self, ship_id=self.ship_id, pack_side='bottom')
+        self.ship_info = ShipInfo(self, ship_id=self.ship_id, pack_params={'side': 'bottom'})
 
     def prev_ship_info(self):
         self.ship_id += -1
