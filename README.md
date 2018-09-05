@@ -11,9 +11,9 @@ This app also requires the ImageTk extension for PIL, as well as the psycopg2 li
 for python2:
   
     sudo apt-get install python-imaging python-imaging-tk
-    sudo pip install psycopg2
+    sudo pip install psycopg2-binary
   
 for python3:
   
     sudo apt-get install python3-pil python3-pil.imagetk
-    sudo pip3 install psycopg2
+    sudo pip3 install psycopg2-binary
