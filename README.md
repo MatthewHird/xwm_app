@@ -1,4 +1,4 @@
-#xwm_app
+# xwm_app
 
 This app is to be used in conjunction with the xwm_database. The script to setup the xwm_database can be found at https://github.com/MatthewHird/xwm_database
 
