@@ -7,10 +7,10 @@ host=server_id dbname=database_name user=postgres_username password=postgres_pas
 
 This app also requires the ImageTk extension for PIL. On linux this can be installed in the terminal using:
   
-  For Python2:
+  for python2:
   
     sudo apt-get install python-imaging python-imaging-tk
   
-  For Python3:
+  for python3:
   
     sudo apt-get install python3-pil python3-pil.imagetk
