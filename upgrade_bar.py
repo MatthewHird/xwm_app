@@ -1,12 +1,16 @@
 import tkinter as tk
+from tkinter import ttk
 from app_window import AppWindow
 from xwm_icons import UpgradeIcons
 from xwm_db_query import XwmDbQuery
+from global_environment import GlobalEnvironment
 
 
-class UpgradeBar(tk.Frame):
+class UpgradeBar(ttk.Frame):
     def __init__(self, master, ship_id=0, pack_params=None, grid_params=None):
-        tk.Frame.__init__(self, master, bg='black', bd=2)
+        ttk.Frame.__init__(self, master, style='UpgradeBar.TFrame', padding=2)
+
+        self.options = GlobalEnvironment.get_stylesheet()
         if grid_params:
             self.grid(grid_params)
         elif pack_params:
@@ -18,15 +22,15 @@ class UpgradeBar(tk.Frame):
 
         self.upgrade_icons = UpgradeIcons()
 
-        self.header = tk.Label(self, bg='dim gray', text='Upgrade Bar', font=('sans-serif', 16))
+        self.header = ttk.Label(self, style='Header.UpgradeBar.TLabel', text='Upgrade Bar',
+                                **self.options['header.upgrade_bar'])
         self.header.grid(row=0, column=0, columnspan=7, sticky='nsew')
 
         self.upgrade_slots = []
         for j in range(7):
-            self.upgrade_slots.append(tk.Label(self, bg='snow3', image=self.upgrade_icons.get_icon('blank_icon'),
-                                               text='', font=('sans-serif', 7), wraplength=34, width=34,
-                                               # compound='top'))
-                                               compound='none'))
+            self.upgrade_slots.append(ttk.Label(self, style='Slot.UpgradeBar.TLabel', text='',
+                                                image=self.upgrade_icons.get_icon('blank_icon'),
+                                                **self.options['slot.upgrade_bar']))
             self.upgrade_slots[j].grid(row=1, column=j, sticky='nsew')
 
         self.update_upgrade_bar(ship_id)
@@ -37,8 +41,6 @@ class UpgradeBar(tk.Frame):
         self.current_ship_id = ship_id
 
         upgrade_data = XwmDbQuery.get_upgrade_bar(ship_id)
-        if not upgrade_data:
-            return False
 
         for j in range(7):
             self.upgrade_slots[j].config(image=self.upgrade_icons.get_icon('blank_icon'), text=' ')

@@ -1,12 +1,16 @@
 import tkinter as tk
+from tkinter import ttk
 from app_window import AppWindow
 from xwm_icons import ActionIcons
 from xwm_db_query import XwmDbQuery
+from global_environment import GlobalEnvironment
 
 
-class ActionBar(tk.Frame):
+class ActionBar(ttk.Frame):
     def __init__(self, master, ship_id=0, pack_params=None, grid_params=None):
-        tk.Frame.__init__(self, master, bg='black')
+        ttk.Frame.__init__(self, master, style='ActionBar.TFrame')
+
+        self.options = GlobalEnvironment.get_stylesheet()
         if grid_params:
             self.grid(grid_params)
         elif pack_params:
@@ -18,15 +22,15 @@ class ActionBar(tk.Frame):
 
         self.action_icons = ActionIcons()
 
-        self.header = tk.Label(self, bg='dim gray', text='Action Bar', font=('sans-serif', 16))
+        self.header = ttk.Label(self, style='Header.ActionBar.TLabel', text='Action Bar',
+                                **self.options['header.action_bar'])
         self.header.grid(row=0, column=0, columnspan=4, sticky='nsew')
 
         self.action_slots = []
         for j in range(4):
-            self.action_slots.append(tk.Label(self, bg='snow3', image=self.action_icons.get_icon('blank_icon'),
-                                              text='', font=('sans-serif', 7), wraplength=60, width=60,
-                                              compound='top'))
-                                              # compound='none'))
+            self.action_slots.append(ttk.Label(self, style='Slot.ActionBar.TLabel', text='',
+                                               image=self.action_icons.get_icon('blank_icon'),
+                                               **self.options['slot.action_bar']))
 
             self.action_slots[j].grid(row=1, column=j, sticky='nsew')
 

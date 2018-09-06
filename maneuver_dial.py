@@ -1,12 +1,16 @@
 import tkinter as tk
+from tkinter import ttk
 from app_window import AppWindow
 from xwm_icons import ManeuverIcons
 from xwm_db_query import XwmDbQuery
+from global_environment import GlobalEnvironment
 
 
-class ManeuverDial(tk.Frame):
+class ManeuverDial(ttk.Frame):
     def __init__(self, master, ship_id=0, pack_params=None, grid_params=None):
-        tk.Frame.__init__(self, master, bg='black')
+        ttk.Frame.__init__(self, master)
+
+        self.options = GlobalEnvironment.get_stylesheet()
         self.maneuver_icons = ManeuverIcons()
         if grid_params:
             self.grid(grid_params)
@@ -21,8 +25,10 @@ class ManeuverDial(tk.Frame):
         for i in range(6):
             self.maneuver_table.append([])
             for j in range(9):
-                self.maneuver_table[i].append(tk.Label(self, image=self.maneuver_icons.get_icon('blank_icon'), text='.',
-                                                       fg='grey', bg='#262626', bd='2', relief='sunken'))
+                self.maneuver_table[i].append(ttk.Label(self, style='Blank.ManeuverDial.TLabel', text='.',
+                                                        image=self.maneuver_icons.get_icon('blank_icon'),
+                                                        **self.options['label.maneuver_dial']))
+                self.maneuver_table[i][j].grid(row=i, column=j, sticky='nsew')
 
         self.__generate_speed_labels()
         self.update_dial(ship_id)
@@ -34,25 +40,30 @@ class ManeuverDial(tk.Frame):
             return False
 
         self.__generate_config_table()
-        for maneuver in dial_list:
-            self.__generate_maneuver_label_config(maneuver['speed'], maneuver['maneuver_id'], maneuver['difficulty_char'])
+
+        if dial_list[0]['is_huge']:
+            for maneuver in dial_list:
+                self.__generate_huge_maneuver_label_config(maneuver['speed'], maneuver['maneuver_id'], maneuver['energy'])
+        else:
+            for maneuver in dial_list:
+                self.__generate_maneuver_label_config(maneuver['speed'], maneuver['maneuver_id'], maneuver['difficulty_char'])
 
         self.__update_maneuver_table()
 
         for i in range(6):
             for j in range(9):
-                self.maneuver_table[i][j].grid(row=i, column=j)
+                self.maneuver_table[i][j].grid()
 
         self.__check_empty_rows_and_cols()
         return True
 
     def __generate_speed_labels(self):
-        self.maneuver_table[0][0].config(image=self.maneuver_icons.get_icon('speed_five'), text='FIVE', fg='white')
-        self.maneuver_table[1][0].config(image=self.maneuver_icons.get_icon('speed_four'), text='FOUR', fg='white')
-        self.maneuver_table[2][0].config(image=self.maneuver_icons.get_icon('speed_three'), text='THREE', fg='white')
-        self.maneuver_table[3][0].config(image=self.maneuver_icons.get_icon('speed_two'), text='TWO', fg='white')
-        self.maneuver_table[4][0].config(image=self.maneuver_icons.get_icon('speed_one'), text='ONE', fg='white')
-        self.maneuver_table[5][0].config(image=self.maneuver_icons.get_icon('speed_zero'), text='ZERO', fg='white')
+        self.maneuver_table[0][0].config(style='Speed.ManeuverDial.TLabel', text='FIVE', image=self.maneuver_icons.get_icon('speed_five'))
+        self.maneuver_table[1][0].config(style='Speed.ManeuverDial.TLabel', text='FOUR', image=self.maneuver_icons.get_icon('speed_four'))
+        self.maneuver_table[2][0].config(style='Speed.ManeuverDial.TLabel', text='THREE', image=self.maneuver_icons.get_icon('speed_three'))
+        self.maneuver_table[3][0].config(style='Speed.ManeuverDial.TLabel', text='TWO', image=self.maneuver_icons.get_icon('speed_two'))
+        self.maneuver_table[4][0].config(style='Speed.ManeuverDial.TLabel', text='ONE', image=self.maneuver_icons.get_icon('speed_one'))
+        self.maneuver_table[5][0].config(style='Speed.ManeuverDial.TLabel', text='ZERO', image=self.maneuver_icons.get_icon('speed_zero'))
 
     def __generate_config_table(self):
         self.config_table = []
@@ -60,14 +71,54 @@ class ManeuverDial(tk.Frame):
         for i in range(6):
             self.config_table.append([])
             for j in range(9):
-                self.config_table[i].append({'image': self.maneuver_icons.get_icon('blank_icon'),
-                                             'text': '.', 'fg': 'grey'})
+                self.config_table[i].append({'style': 'Blank.ManeuverDial.TLabel', 'text': '.',
+                                             'image': self.maneuver_icons.get_icon('blank_icon')})
+
+    def __generate_huge_maneuver_label_config(self, speed, maneuver_type_id, energy):
+        row = 5 - speed
+        col = None
+        maneuver_type = None
+        style = None
+        text = str(speed)
+
+        if maneuver_type_id == 2:
+            col = 2
+            maneuver_type = 'bank_left'
+            text += '-BL'
+        elif maneuver_type_id == 3:
+            col = 3
+            maneuver_type = 'straight_move'
+            text += '-SM'
+        elif maneuver_type_id == 4:
+            col = 4
+            maneuver_type = 'bank_right'
+            text += '-BR'
+
+        if energy == 0:
+            style = 'White.ManeuverDial.TLabel'
+            maneuver_type += '_white'
+            text += '-0'
+        elif energy == 1:
+            style = 'White.ManeuverDial.TLabel'
+            maneuver_type += '_white'
+            text += '-1'
+        elif energy == 2:
+            style = 'White.ManeuverDial.TLabel'
+            maneuver_type += '_white'
+            text += '-2'
+        elif energy == 3:
+            style = 'White.ManeuverDial.TLabel'
+            maneuver_type += '_white'
+            text += '-3'
+
+        self.config_table[row][col] = {'style': style, 'text': text,
+                                       'image': self.maneuver_icons.get_icon(maneuver_type)}
 
     def __generate_maneuver_label_config(self, speed, maneuver_type_id, difficulty):
         row = 5 - speed
         col = None
         maneuver_type = None
-        color = None
+        style = None
         text = str(speed)
 
         if maneuver_type_id == 1:
@@ -128,29 +179,28 @@ class ManeuverDial(tk.Frame):
             text += '-RBR'
 
         if difficulty == 'G':
-            color = 'green'
+            style = 'Green.ManeuverDial.TLabel'
             maneuver_type += '_green'
             text += '-G'
         elif difficulty == 'W':
-            color = 'white'
+            style = 'White.ManeuverDial.TLabel'
             maneuver_type += '_white'
             text += '-W'
         elif difficulty == 'R':
-            color = 'red'
+            style = 'Red.ManeuverDial.TLabel'
             maneuver_type += '_red'
             text += '-R'
 
-        self.config_table[row][col] = {'image': self.maneuver_icons.get_icon(maneuver_type), 'text': text, 'fg': color}
+        self.config_table[row][col] = {'style': style, 'text': text,
+                                       'image': self.maneuver_icons.get_icon(maneuver_type)}
 
     def __update_maneuver_table(self):
         for i in range(6):
             for j in range(1, 9):
                 if self.maneuver_table[i][j].cget('text') != self.config_table[i][j]['text']:
-                    self.maneuver_table[i][j].grid_forget()
                     self.maneuver_table[i][j].config(self.config_table[i][j])
 
     def __check_empty_rows_and_cols(self):
-
         for i in range(6):
             empty = True
             for j in range(1, 9):
@@ -158,7 +208,7 @@ class ManeuverDial(tk.Frame):
                     empty = False
             if empty:
                 for k in range(9):
-                    self.maneuver_table[i][k].grid_forget()
+                    self.maneuver_table[i][k].grid_remove()
         for j in range(1, 9):
             empty = True
             for i in range(6):
@@ -166,7 +216,7 @@ class ManeuverDial(tk.Frame):
                     empty = False
             if empty:
                 for k in range(6):
-                    self.maneuver_table[k][j].grid_forget()
+                    self.maneuver_table[k][j].grid_remove()
 
 
 if __name__ == '__main__':

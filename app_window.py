@@ -1,11 +1,12 @@
 import tkinter as tk
+from tkinter import ttk
 from global_environment import GlobalEnvironment
 
 
-class AppWindow(tk.Frame):
-
+class AppWindow(ttk.Frame):
     def __init__(self, master=None):
-        tk.Frame.__init__(self, master)
+        ttk.Frame.__init__(self, master)
+
         GlobalEnvironment.set_master_frame(master)
         self.pack()
         self.pack_propagate(1)

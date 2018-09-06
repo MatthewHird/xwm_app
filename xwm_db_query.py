@@ -234,7 +234,7 @@ class XwmDbQuery:
         return result
 
     @classmethod
-    def get_maneuver_dial(cls, ship_id):
+    def get_maneuver_dial(cls, ship_id, with_huge=True):
         conn = None
         result_tuples = []
 
@@ -258,11 +258,16 @@ class XwmDbQuery:
             if conn is not None:
                 conn.close()
 
-        keys = ['ship_id', 'speed', 'maneuver_id', 'difficulty_char']
-
         result = []
-        for values in result_tuples:
-            result.append(dict(zip(keys, values)))
+        if result_tuples:
+            keys = ['ship_id', 'speed', 'maneuver_id', 'difficulty_char']
+            for values in result_tuples:
+                dictionary = dict(zip(keys, values))
+                dictionary['is_huge'] = False
+                result.append(dictionary)
+        else:
+            if with_huge:
+                result = cls.get_huge_maneuver_dial(ship_id)
 
         return result
 
@@ -278,7 +283,7 @@ class XwmDbQuery:
             cur.execute(
                 """
                 SELECT * FROM huge_maneuver_dial
-                WHERE ship_name = 
+                WHERE ship_id = 
                 """ + str(ship_id)
             )
             result_tuples = cur.fetchall()
@@ -295,7 +300,9 @@ class XwmDbQuery:
 
         result = []
         for values in result_tuples:
-            result.append(dict(zip(keys, values)))
+            dictionary = dict(zip(keys, values))
+            dictionary['is_huge'] = True
+            result.append(dictionary)
 
         return result
 
@@ -415,6 +422,39 @@ class XwmDbQuery:
 
         return result
 
+    @classmethod
+    def get_pilot_name(cls, pilot_id, variant=True):
+        conn = None
+        result_tuple = None
+
+        try:
+            conn = psycopg2.connect(cls.__get_server_parameters())
+            cur = conn.cursor()
+
+            cur.execute(
+                """
+                SELECT 
+                    pilot_name,
+                    variant
+                FROM pilot
+                WHERE pilot_id = """
+                + str(pilot_id)
+            )
+            result_tuple = cur.fetchall()
+            cur.close()
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+        finally:
+            if conn is not None:
+                conn.close()
+        result = result_tuple[0][0]
+        if variant:
+            if result_tuple[0][1] != '':
+                result += ' (' + result_tuple[0][1] + ')'
+        return result
+
 
 if __name__ == '__main__':
-    print(XwmDbQuery.get_ship_basic_info(13))
+    print(XwmDbQuery.get_maneuver_dial(1))

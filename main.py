@@ -8,7 +8,6 @@ class Main:
     def __init__(self):
         self.app = None
         self.root = None
-        self.butt = None
 
     def run(self):
         self.root = tk.Tk()

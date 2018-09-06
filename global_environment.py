@@ -1,6 +1,10 @@
+from xwm_ttk_stylesheet import XwmTtkStylesheet
+
+
 class GlobalEnvironment:
     master_frame = None
     current_screen = None
+    stylesheet = None
 
     @classmethod
     def set_master_frame(cls, master_frame):
@@ -15,3 +19,9 @@ class GlobalEnvironment:
         if cls.current_screen:
             cls.current_screen.destroy()
         cls.current_screen = new_screen
+
+    @classmethod
+    def get_stylesheet(cls):
+        if not cls.stylesheet:
+            cls.stylesheet = XwmTtkStylesheet.get_style()
+        return cls.stylesheet
